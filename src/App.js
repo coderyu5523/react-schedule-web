@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Calendar from 'react-calendar';
+import Header from './Header';
+import ScheduleRegister from './component/ScheduleRegister';
+import ScheduleList from './component/ScheduleList';
 import 'react-calendar/dist/Calendar.css';
 import './App.css';
 
@@ -79,94 +81,27 @@ function App() {
 
   return (
     <div className="App app-flex-layout">
-      {showHeader && (
-        <header style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          background: 'transparent',
-          color: '#3b3b5c',
-          fontWeight: 700,
-          fontSize: '1.7rem',
-          letterSpacing: '-1px',
-          padding: '22px 0 18px 0',
-          textAlign: 'center',
-          zIndex: 100,
-          boxShadow: '0 2px 12px 0 rgba(80,80,180,0.08)'
-        }}>
-          내 일정 관리하기
-        </header>
-      )}
+      <Header show={showHeader} />
       <div style={{height: 80, minWidth: 0}} />
-      <div className="register-panel">
-        <h2>일정 등록</h2>
-        <form onSubmit={addTask}>
-          <input
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            style={{ minWidth: 120, marginRight: 8 }}
-          />
-          <input
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="새 일정 입력"
-            type="text"
-          />
-          <button type="submit">추가</button>
-        </form>
-        <button
-          type="button"
-          style={{ marginTop: 12, background: '#fff', color: '#6c63ff', border: '1.5px solid #6c63ff', borderRadius: 8, padding: '8px 18px', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
-          onClick={() => setShowCalendar(v => !v)}
-        >
-          {showCalendar ? '목록으로 보기' : '달력으로 보기'}
-        </button>
-        {showCalendar && (
-          <div style={{ marginTop: 24 }}>
-            <Calendar
-              value={new Date(date)}
-              onClickDay={onCalendarChange}
-              tileContent={tileContent}
-              calendarType="gregory"
-              locale="ko-KR"
-            />
-            <div style={{ marginTop: 16 }}>
-              <b>{date} 일정</b>
-              <ul>
-                {(tasksByDate[date] || []).length === 0 && <li className="empty">일정이 없습니다.</li>}
-                {(tasksByDate[date] || []).map((task, idx) => (
-                  <li key={idx}>
-                    <span>{task}</span>
-                    <button className="delete-btn" onClick={() => removeTask(date, idx)}>삭제</button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-      </div>
+      <ScheduleRegister
+        date={date}
+        setDate={setDate}
+        input={input}
+        setInput={setInput}
+        addTask={addTask}
+        showCalendar={showCalendar}
+        setShowCalendar={setShowCalendar}
+        tileContent={tileContent}
+        onCalendarChange={onCalendarChange}
+        tasksByDate={tasksByDate}
+        removeTask={removeTask}
+      />
       {!showCalendar && (
-        <div className="list-panel">
-          <h2>일정 목록</h2>
-          <div className="schedule-container" style={{ boxShadow: 'none', marginTop: 0, padding: '20px 18px 16px 18px' }}>
-            {sortedDates.length === 0 && <div className="empty">일정이 없습니다.</div>}
-            {sortedDates.map(dateKey => (
-              <div key={dateKey} style={{ marginBottom: 24 }}>
-                <div style={{ marginBottom: 8, color: '#6c63ff', fontWeight: 500, fontSize: '1.08rem' }}>{dateKey} 일정</div>
-                <ul>
-                  {tasksByDate[dateKey].map((task, idx) => (
-                    <li key={idx}>
-                      <span>{task}</span>
-                      <button className="delete-btn" onClick={() => removeTask(dateKey, idx)}>삭제</button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ScheduleList
+          sortedDates={sortedDates}
+          tasksByDate={tasksByDate}
+          removeTask={removeTask}
+        />
       )}
     </div>
   );
