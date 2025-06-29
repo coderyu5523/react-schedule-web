@@ -1,5 +1,6 @@
 import React from 'react';
 import Calendar from 'react-calendar';
+import CalendarView from './CalendarView';
 
 function ScheduleRegister({
   date,
@@ -40,27 +41,12 @@ function ScheduleRegister({
         {showCalendar ? '목록으로 보기' : '달력으로 보기'}
       </button>
       {showCalendar && (
-        <div style={{ marginTop: 24 }}>
-          <Calendar
-            value={new Date(date)}
-            onClickDay={onCalendarChange}
-            tileContent={tileContent}
-            calendarType="gregory"
-            locale="ko-KR"
-          />
-          <div style={{ marginTop: 16 }}>
-            <b>{date} 일정</b>
-            <ul>
-              {(tasksByDate[date] || []).length === 0 && <li className="empty">일정이 없습니다.</li>}
-              {(tasksByDate[date] || []).map((task, idx) => (
-                <li key={idx}>
-                  <span>{task}</span>
-                  <button className="delete-btn" onClick={() => removeTask(date, idx)}>삭제</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <CalendarView
+          date={date}
+          onCalendarChange={onCalendarChange}
+          tileContent={tileContent}
+          tasksByDate={tasksByDate}
+        />
       )}
     </div>
   );
