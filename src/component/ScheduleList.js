@@ -1,6 +1,39 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js'
 
-function ScheduleList({ sortedDates, tasksByDate, removeTask }) {
+
+
+function ScheduleList() {
+  const [tasksByDate, setTasksByDate] = useState({});
+  const [sortedDates, setSortedDates] = useState([]);
+
+  //supabase 연결
+  const supabaseUrl = 'https://vcgqdoozijktlhgbzyps.supabase.co'
+  const supabaseKey = process.env.REACT_APP_SUPABASE_KEY
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  useEffect(() => {
+    async function getSchedule() {
+      // schedule 테이블 가져오기
+      let { data: schedule, error } = await supabase
+        .from('schedule')
+        .select('*');
+
+      if (schedule) {
+        // 날짜별로 그룹핑
+        const grouped = schedule.reduce((acc, item) => {
+          const dateKey = item.cdt.slice(0, 10); // YYYY-MM-DD
+          if (!acc[dateKey]) acc[dateKey] = [];
+          acc[dateKey].push(item);
+          return acc;
+        }, {});
+        setTasksByDate(grouped);
+        setSortedDates(Object.keys(grouped).sort());
+      }
+    }
+    getSchedule();
+  }, []);
+
   return (
     <div className="list-panel">
       <h2>일정 목록</h2>
@@ -8,12 +41,12 @@ function ScheduleList({ sortedDates, tasksByDate, removeTask }) {
         {sortedDates.length === 0 && <div className="empty">일정이 없습니다.</div>}
         {sortedDates.map(dateKey => (
           <div key={dateKey} style={{ marginBottom: 24 }}>
-            <div style={{ marginBottom: 8, color: '#6c63ff', fontWeight: 500, fontSize: '1.08rem' }}>{dateKey} 일정</div>
+            <div style={{ marginBottom: 8, color: '#6c63ff', fontWeight: 500, fontSize: '1.08rem' }}>{dateKey}</div>
             <ul>
-              {tasksByDate[dateKey].map((task, idx) => (
-                <li key={idx}>
-                  <span>{task}</span>
-                  <button className="delete-btn" onClick={() => removeTask(dateKey, idx)}>삭제</button>
+              {tasksByDate[dateKey].map((task) => (
+                <li key={task.id}>
+                  <span>{task.title}</span>
+                  {/* 삭제 버튼 등 추가 가능 */}
                 </li>
               ))}
             </ul>
