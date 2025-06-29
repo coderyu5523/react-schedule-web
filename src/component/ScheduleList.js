@@ -19,6 +19,11 @@ function ScheduleList() {
         .from('schedule')
         .select('*');
 
+        if (error) {
+          console.error('Supabase error:', error.message);
+          return; // 에러가 있으면 이후 코드 실행하지 않음
+        }
+
       if (schedule) {
         // 날짜별로 그룹핑
         const grouped = schedule.reduce((acc, item) => {
