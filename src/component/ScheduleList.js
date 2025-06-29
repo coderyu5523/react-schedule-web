@@ -37,7 +37,7 @@ function ScheduleList() {
       }
     }
     getSchedule();
-  }, []);
+  }, [supabase]);
 
   return (
     <div className="list-panel">
