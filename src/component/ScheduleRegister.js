@@ -44,8 +44,8 @@ function ScheduleRegister({
         <CalendarView
           date={date}
           onCalendarChange={onCalendarChange}
-          tileContent={tileContent}
-          tasksByDate={tasksByDate}
+          //tileContent={tileContent}
+          //tasksByDate={tasksByDate}
         />
       )}
     </div>
